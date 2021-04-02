@@ -1,0 +1,24 @@
+#for creating users from django model:
+
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+class Agent(models.Model):
+    user = models.OnetoOneField(User, on_delete=models.CASCADE)
+
+
+
+#
+Car.objects.fiter(make="Audi")
+Car.objects.filter(year__gt=2016)
+returns a query set (can loop on it), get() does not return a QuerySet
+
+#better way of importing user rather than from Model
+>>> from django.contrib.auth import get_user_model
+>>> User = get_user_model()
+>>> User.objects.all()
+<QuerySet [<User: aman>]>
+
+#this is how you query for objects:
+aman_agent = Agent.objects.get(user__email="aman@man.com") NOT user.email in the shell
