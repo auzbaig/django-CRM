@@ -40,12 +40,4 @@
   </div>
 </section>
 
-<a href="{% url 'leads:lead-list' %}">Go back to leads</a>
-<hr />
-<h1>Here are the details for {{ lead.first_name }}</h1>
-<hr />
-    <a href="{% url 'leads:lead-update' lead.pk %}">Update</a>
-    <a href="{% url 'leads:lead-delete' lead.pk %}">Delete</a>
-<!-- <a href="/leads/{{lead.pk}}/update/">Update</a>
-<a href="/leads/{{lead.pk}}/delete/">Delete</a> -->
 {% endblock content%}  
