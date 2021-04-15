@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, reverse
 from django.views import generic
 #from django.http import HttpRequest
 from .models import Lead, Agent
-from .forms import LeadForm, LeadModelForm, CustomUserCreationForm
+from .forms import LeadForm, LeadModelForm, CustomUserCreationForm#, AssignAgentForm
 
 # CRUD + L - Create, Retrieve, Update and Delete + List
 
@@ -34,9 +34,14 @@ def lead_list(request):
 
 class LeadListView(LoginRequiredMixin, generic.ListView):
     template_name = 'leads/lead_list.html'
-    queryset = Lead.objects.all()
+    #queryset = Lead.objects.all(), now we will filter the query set
     context_object_name = "leads"
 
+    def get_queryset(self):
+        queryset = Lead.objects.all()
+        if self.request.user.is_agent:
+            queryset = queryset.filter(agent__user=self.request.user) #filter the leads based on the agent field where that agent has the user = self.request user
+        return queryset
 
 def lead_detail(request, pk):
     lead = Lead.objects.get(id=pk)
@@ -122,7 +127,16 @@ class LeadDeleteView(LoginRequiredMixin, generic.DeleteView):
     def get_success_url(self):
         return reverse("leads:lead-list")
 
+"""
+class AssignAgentView(LoginRequiredMixin, generic.FormView):
+    template_name = "leads/assign_agent.html"
+    form_class = None #AssignAgentForm
 
+    def get_success_url(self):
+        return reverse("leads:lead-list")
+
+    #have to implement the form valid method to save it
+"""
 """
 def lead_create(request):
     form = LeadForm()

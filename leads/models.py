@@ -1,15 +1,18 @@
 from django.db import models
+from django.db.models.signals import post_save #after commit to the database #pre_save, before commit to database
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 
 
 class User(AbstractUser):
-    pass #so its easy to add additional fields later on
+    #so its easy to add additional fields later on
+    is_organizer = models.BooleanField(default=True)
+    is_agent = models.BooleanField(default=False) #additional user properties added
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.user.username
@@ -34,20 +37,28 @@ class Agent(models.Model):
         return self.user.username
 
 
-    """
-    SOURCE_CHOICES = (
-        #set a tuple
-        ('YT-displayvalue','Youtube-stores in database'),
-        ('Google,' 'Google'),
-        ('Newsletter', 'Newsletter'),
-    )
-    #can override in database, only a python restriction
-
-    #phoned = models.BooleanField(default=False)
-    #source = models.CharField(choices = SOURCE_CHOICES, max_length=100)
-
-    #profile_picture = models.ImageField(blank=True, null=True) #blank=submitting an empty string, null=no value in database (both needed for optional)
-    #special_files = models.FieldFields(blank=True, null=True)
-    """
-
+#signals, for communicating events
+def post_user_created_signal(sender, instance, created, **kwargs):
+    if created: #if a new user is created then execute this and create a new user profile
+        UserProfile.objects.create(user=instance)
     
+#name of the function to be called, the model that is going to send the event
+post_save.connect(post_user_created_signal, sender=User)
+
+
+"""
+SOURCE_CHOICES = (
+    #set a tuple
+    ('YT-displayvalue','Youtube-stores in database'),
+    ('Google,' 'Google'),
+    ('Newsletter', 'Newsletter'),
+)
+#can override in database, only a python restriction
+
+#phoned = models.BooleanField(default=False)
+#source = models.CharField(choices = SOURCE_CHOICES, max_length=100)
+
+#profile_picture = models.ImageField(blank=True, null=True) #blank=submitting an empty string, null=no value in database (both needed for optional)
+#special_files = models.FieldFields(blank=True, null=True)
+"""
+

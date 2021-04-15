@@ -26,3 +26,12 @@ class LeadForm(forms.Form):
     last_name = forms.CharField()
     age = forms.IntegerField(min_value=0)
 
+#class AssignAgentForm(forms.Form):
+    #ChoiceField and ModelChoiceField
+    #agent = forms.ChoiceField(choices=(
+    #        ("agent 1", "agent 1"),
+    #      ("agent 2", "agent 2"),
+    #        ))
+ #   agent = forms.ModelChoiceField(queryset=Agent.objects.none())
+
+   # def __init__(self, *args, **kwargs):
