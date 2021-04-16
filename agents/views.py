@@ -28,7 +28,7 @@ class AgentCreateView(OrganizerAndLoginRequiredMixin, generic.CreateView):
         agent.save()
         return super(AgentCreateView, self).form_valid(form)
 
-class AgentDetailView(OrganizerAndLoginRequiredMixin, generic.DetailView):
+class AgentDetailView(OrganizerAndLoginRequiredMixin , generic.DetailView):
     template_name = "agents/agents_detail.html"
 
     def get_queryset(self):

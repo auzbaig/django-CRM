@@ -11,23 +11,22 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env(
+    DEBUG=(bool, False)
+)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
+#READ_DOT_ENV_FILE=True
+#READ_DOT_ENV_FILE = env.bool('READ_DOT_ENV_FILE', default=False)
+#if READ_DOT_ENV_FILE:
+environ.Env.read_env()
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'o_c7m2bxjbs#)=$!#0(ru=(03&=n13$!!xjw-j2s4)wsu@6(iw'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
-
-
+DEBUG = env('DEBUG')
+SECRET_KEY = env('SECRET_KEY')
 # Application definition
 
 INSTALLED_APPS = [
@@ -134,3 +133,31 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 #redirects here after login
 LOGIN_REDIRECT_URL = "/leads"
 LOGIN_URL = "/login"
+
+
+LOGOUT_REDIRECT_URL = "/"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+CRISPY_TEMPLATE_PACK = 'tailwind'
+
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    X_FRAME_OPTIONS = "DENY"
+
+    ALLOWED_HOSTS = ["*"]
+
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = env("EMAIL_HOST")
+    EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+    EMAIL_USE_TLS = True
+    EMAIL_PORT = env("EMAIL_PORT")
+    DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
